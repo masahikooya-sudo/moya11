@@ -12,6 +12,22 @@ python3 -m http.server 8000
 
 `http://localhost:8000` を開きます。初回起動時に、進み具合の異なるサンプル案件が3件入ります。
 
+### Docker で動かす
+
+Docker Desktop を起動した状態で、このフォルダで次を実行します。
+
+```bash
+docker compose up -d --build
+```
+
+`http://localhost:8080` を開きます。ファイルを変更したときは同じコマンドをもう一度実行します。止めるときは次のコマンドです。
+
+```bash
+docker compose down
+```
+
+8080 番がほかで使われている場合は、`docker-compose.yml` の `"8080:80"` の左側の数字を変えてください。
+
 ## できること
 
 | メニュー | 内容 | 対応する要件 |
@@ -47,3 +63,4 @@ python3 -m http.server 8000
 - `pages-report.js` レポート
 - `data.js` / `data2.js` メニュー定義とダミーデータ
 - `styles.css` スタイル
+- `Dockerfile` / `docker-compose.yml` / `nginx.conf` Docker での配信用
