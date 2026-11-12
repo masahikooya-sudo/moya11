@@ -6,6 +6,7 @@ const STORE_KEY = 'pd-ai-sourcing-cases-v1';
 const STEPS = ['依頼内容の入力', '依頼情報の整理', '要件マトリクス', '候補選定', 'RFP生成'];
 
 const state = { page: 'rfp', caseId: null, cases: loadCases(), busy: null };
+const PAGES = {}; // RFP作成以外の画面は pages-*.js が登録する
 
 function loadCases() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch (e) { return []; }
@@ -208,7 +209,7 @@ function renderSidebar() {
         ${g.sections.map(s => `
           ${s.label ? `<div class="nav-section">${esc(s.label)}</div>` : ''}
           ${s.items.map(it => `<button class="nav-item${it.id === state.page ? ' active' : ''}${s.label ? ' sub' : ''}" data-nav="${it.id}">
-            <span>${esc(it.label)}</span>${it.ready ? '' : '<span class="soon">準備中</span>'}</button>`).join('')}
+            <span>${esc(it.label)}</span>${it.ready || PAGES[it.id] ? '' : '<span class="soon">準備中</span>'}</button>`).join('')}
         `).join('')}
       </div>`).join('')}
     </nav>`;
@@ -221,10 +222,13 @@ function render() {
   $('#crumb').innerHTML = [found.g.group, found.s.label, found.it.label, c && state.page === 'rfp' ? c.title : null]
     .filter(Boolean).map(esc).join(' <span class="sep">›</span> ');
   const view = $('#view');
-  if (state.page !== 'rfp') view.innerHTML = renderPlaceholder(found);
+  if (PAGES[state.page]) view.innerHTML = PAGES[state.page].render();
+  else if (state.page !== 'rfp') view.innerHTML = renderPlaceholder(found);
   else if (!c) view.innerHTML = renderCaseList();
   else view.innerHTML = renderWizard(c);
-  view.scrollTop = 0;
+  const key = state.page + ':' + (state.caseId || '') + ':' + (c ? c.step : '');
+  if (render.lastKey !== key) view.scrollTop = 0;
+  render.lastKey = key;
 }
 
 function renderPlaceholder({ g, it }) {
@@ -560,4 +564,5 @@ document.addEventListener('change', e => {
   }
 });
 
-render();
+// 各画面のスクリプトを読み込み終えてから最初の描画を行う
+document.addEventListener('DOMContentLoaded', () => { if (typeof seedSamples === 'function') seedSamples(); render(); });

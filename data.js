@@ -5,7 +5,7 @@ const MENU = [
   { group: 'WORK', sections: [
     { label: '見積取得', items: [
       { id: 'rfp', label: 'RFP作成', ready: true },
-      { id: 'compare', label: '比較表生成', frs: 'FR-020〜028' },
+      { id: 'compare', label: '比較表生成' },
     ]},
     { label: '決裁', items: [
       { id: 'ringi', label: '稟議作成支援', frs: 'FR-029〜036' },
